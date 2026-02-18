@@ -13,5 +13,9 @@ export const routes: Routes = [
   {
     path: 'backup',
     loadComponent: () => import('./sections/backup/backup.component').then(m => m.BackupComponent)
+  },
+  {
+    path: 'historico',
+    loadComponent: () => import('./sections/history/history.component').then(m => m.HistoryComponent)
   }
 ];

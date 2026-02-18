@@ -66,7 +66,7 @@ export class BackupComponent {
 
     this.backupService.startBackup(this.sources(), this.destinations())
       .subscribe({
-        next: (res) => {
+        next: (_res) => {
           this.progress.set(100);
           this.currentStatus.set('Backup finalizado com sucesso!');
 
