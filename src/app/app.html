@@ -1,0 +1,28 @@
+<div class="flex flex-col min-h-screen bg-white">
+  <app-header></app-header>
+
+  <div class="flex flex-1">
+    <app-sidebar
+      [activeSection]="activeSection()"
+      (onSelect)="changeSection($event)">
+    </app-sidebar>
+
+    <main class="flex-1 overflow-auto">
+      <div class="max-w-6xl mx-auto px-8 py-8">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-6 capitalize">
+          {{ activeSection() }}
+        </h2>
+
+        @if (activeSection() === 'inicio') {
+          <div class="animate-in fade-in duration-500">
+            <p class="text-gray-600">Conteúdo da Home em construção...</p>
+          </div>
+        }
+
+        @if (activeSection() === 'historico') {
+          <p class="text-gray-600">O histórico aparecerá aqui.</p>
+        }
+      </div>
+    </main>
+  </div>
+</div>
