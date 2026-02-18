@@ -1,27 +1,34 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
-import { LucideAngularModule, Database, FileText, Settings, FolderTree, Play, History, List } from 'lucide-angular';
+import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  LucideAngularModule,
+  Database,
+  FileText,
+  Settings,
+  FolderTree,
+  Play,
+  History,
+  List
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [LucideAngularModule], // CommonModule removido pois @for é nativo
+  imports: [LucideAngularModule, RouterLink, RouterLinkActive],
   template: `
     <aside class="w-56 border-r border-gray-200 p-6 flex flex-col h-full">
       <nav class="flex-1 space-y-0.5">
 
         @for (item of menuItems; track item.id) {
-          <button
-            type="button"
-            (click)="onSelect.emit(item.id)"
-            [class]="'w-full text-left px-2 py-1.5 rounded text-sm flex items-center space-x-2 '"
-            [class.bg-gray-100]="activeSection === item.id"
-            [class.text-gray-900]="activeSection === item.id"
-            [class.text-gray-600]="activeSection !== item.id"
-            [class.hover:text-gray-900]="activeSection !== item.id"
+          <a
+            [routerLink]="['/' + item.id]"
+            routerLinkActive="bg-gray-100 text-gray-900"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="w-full text-left px-2 py-1.5 rounded text-sm flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer decoration-none"
           >
             <lucide-icon [name]="item.icon" class="w-4 h-4"></lucide-icon>
             <span>{{ item.title }}</span>
-          </button>
+          </a>
         }
 
       </nav>
@@ -29,9 +36,6 @@ import { LucideAngularModule, Database, FileText, Settings, FolderTree, Play, Hi
   `
 })
 export class SidebarComponent {
-  @Input() activeSection = 'inicio';
-  @Output() onSelect = new EventEmitter<string>();
-
   readonly menuItems = [
     { id: 'inicio', title: 'Home', icon: Database },
     { id: 'sobre', title: 'About', icon: FileText },
