@@ -1,0 +1,90 @@
+<div class="space-y-8 animate-in fade-in duration-500">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+      <div class="flex items-center space-x-2 mb-4 text-gray-900">
+        <lucide-icon [name]="folderIcon" class="w-5 h-5"></lucide-icon>
+        <h3 class="font-semibold">Source Paths</h3>
+      </div>
+
+      <div class="flex space-x-2 mb-4">
+        <input [(ngModel)]="newSource" (keyup.enter)="addSource()"
+               placeholder="C:\data\my-files"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-gray-400">
+        <button (click)="addSource()" class="p-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors">
+          <lucide-icon [name]="plusIcon" class="w-4 h-4"></lucide-icon>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        @for (path of sources(); track $index) {
+          <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded border border-gray-100">
+            <span class="text-sm text-gray-600 truncate">{{ path }}</span>
+            <button (click)="removeSource($index)" class="text-gray-400 hover:text-red-500 transition-colors">
+              <lucide-icon [name]="trashIcon" class="w-4 h-4"></lucide-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+      <div class="flex items-center space-x-2 mb-4 text-gray-900">
+        <lucide-icon [name]="folderIcon" class="w-5 h-5"></lucide-icon>
+        <h3 class="font-semibold">Destination Paths</h3>
+      </div>
+
+      <div class="flex space-x-2 mb-4">
+        <input [(ngModel)]="newDestination" (keyup.enter)="addDestination()"
+               placeholder="D:\backup-safe"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-gray-400">
+        <button (click)="addDestination()" class="p-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors">
+          <lucide-icon [name]="plusIcon" class="w-4 h-4"></lucide-icon>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        @for (path of destinations(); track $index) {
+          <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded border border-gray-100">
+            <span class="text-sm text-gray-600 truncate">{{ path }}</span>
+            <button (click)="removeDestination($index)" class="text-gray-400 hover:text-red-500 transition-colors">
+              <lucide-icon [name]="trashIcon" class="w-4 h-4"></lucide-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (isBackingUp()) {
+    <div class="max-w-xl mx-auto mb-8 animate-in slide-in-from-bottom-4 duration-300">
+      <div class="flex justify-between mb-2">
+        <span class="text-sm font-medium text-gray-700">{{ currentStatus() }}</span>
+        <span class="text-sm font-bold text-gray-900">{{ progress() }}%</span>
+      </div>
+
+      <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+        <div
+          class="bg-gray-900 h-2.5 rounded-full transition-all duration-500 ease-out"
+          [style.width.%]="progress()">
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="flex justify-center pt-4">
+    <button
+      (click)="startBackup()"
+      [disabled]="!canStart()"
+      class="relative flex items-center space-x-2 px-8 py-3 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl active:scale-95">
+
+      @if (isBackingUp()) {
+        <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+        <span>Processando...</span>
+      } @else {
+        <lucide-icon [name]="playIcon" class="w-5 h-5"></lucide-icon>
+        <span>Start Backup Process</span>
+      }
+    </button>
+  </div>
+</div>

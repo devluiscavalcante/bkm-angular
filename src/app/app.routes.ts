@@ -9,5 +9,9 @@ export const routes: Routes = [
   {
     path: 'inicio',
     loadComponent: () => import('./sections/initial/initial.component').then(m => m.InitialComponent)
+  },
+  {
+    path: 'backup',
+    loadComponent: () => import('./sections/backup/backup.component').then(m => m.BackupComponent)
   }
 ];
