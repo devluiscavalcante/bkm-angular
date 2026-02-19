@@ -1,0 +1,58 @@
+<div class="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+
+  <div class="text-center space-y-4">
+    <div class="inline-flex items-center justify-center p-3 bg-gray-100 rounded-full mb-2">
+      <lucide-icon [name]="infoIcon" class="w-8 h-8 text-gray-900"></lucide-icon>
+    </div>
+    <h1 class="text-4xl font-bold text-gray-900">About Backup Manager (BKM)</h1>
+    <p class="text-gray-500 max-w-xl mx-auto">{{ projectInfo().description }}</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+      <h3 class="font-semibold text-gray-900 mb-4 flex items-center">
+        <lucide-icon [name]="codeIcon" class="w-4 h-4 mr-2"></lucide-icon>
+        Technical Specs
+      </h3>
+      <ul class="space-y-3">
+        <li class="flex justify-between text-sm">
+          <span class="text-gray-500">Version</span>
+          <span class="font-medium text-gray-900">{{ projectInfo().version }}</span>
+        </li>
+        <li class="flex justify-between text-sm">
+          <span class="text-gray-500">Developer</span>
+          <span class="font-medium text-gray-900">{{ projectInfo().author }}</span>
+        </li>
+        <li class="flex justify-between text-sm">
+          <span class="text-gray-500">Status</span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+            Stable Release
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+      <h3 class="font-semibold text-gray-900 mb-4 flex items-center">
+        <lucide-icon [name]="githubIcon" class="w-4 h-4 mr-2"></lucide-icon>
+        Open Source
+      </h3>
+      <div class="flex flex-wrap gap-2 mb-6">
+        @for (tech of projectInfo().techStack; track tech) {
+          <span class="px-3 py-1 bg-gray-50 border border-gray-100 rounded-full text-xs text-gray-600">
+            {{ tech }}
+          </span>
+        }
+      </div>
+      <a [href]="projectInfo().repoUrl" target="_blank"
+         class="flex items-center justify-center space-x-2 w-full py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors text-sm">
+        <span>View on GitHub</span>
+        <lucide-icon [name]="linkIcon" class="w-4 h-4"></lucide-icon>
+      </a>
+    </div>
+  </div>
+
+  <p class="text-center text-xs text-gray-400 pt-8 border-t border-gray-100">
+    &copy; 2025 Backup Manager (BKM). Distributed under MIT License.
+  </p>
+</div>
