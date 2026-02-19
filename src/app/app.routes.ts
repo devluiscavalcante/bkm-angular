@@ -29,5 +29,9 @@ export const routes: Routes = [
   {
     path: 'estrutura',
     loadComponent: () => import('./sections/structure/structure.component').then(m => m.StructureComponent)
+  },
+  {
+    path: 'logs',
+    loadComponent: () => import('./sections/logs/logs.component').then(m => m.LogsComponent)
   }
 ];
