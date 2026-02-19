@@ -25,5 +25,9 @@ export const routes: Routes = [
   {
     path: 'especificacoes',
     loadComponent: () => import('./sections/specs/specs.component').then(m => m.SpecsComponent)
+  },
+  {
+    path: 'estrutura',
+    loadComponent: () => import('./sections/structure/structure.component').then(m => m.StructureComponent)
   }
 ];
