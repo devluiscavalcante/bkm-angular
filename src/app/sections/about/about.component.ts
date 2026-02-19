@@ -1,6 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Info, Github, ExternalLink, Code2, ShieldCheck, Cpu, Layers, Server } from 'lucide-angular';
+import { LucideAngularModule, Info, Github, ExternalLink, Code2, ShieldCheck, Cpu, Layers, Server, Terminal, Download, Play } from 'lucide-angular';
+
+interface Step {
+  label: string;
+  desc: string;
+  command: string;
+  icon: any;
+}
 
 interface DocSection {
   title: string;
@@ -26,6 +33,36 @@ export class AboutComponent {
   readonly linkIcon = ExternalLink;
   readonly codeIcon = Code2;
   readonly serverIcon = Server;
+  readonly terminalIcon = Terminal;
+  readonly downloadIcon = Download;
+  readonly playIcon = Play;
+
+  quickStartSteps = signal<Step[]>([
+    {
+      label: 'Prerequisites',
+      desc: 'Ensure you have Java 17+, Node.js 18+, and a SQL Database ready.',
+      command: 'java --version && node -v',
+      icon: Download
+    },
+    {
+      label: 'Backend Setup',
+      desc: 'Clone the repository and run the Spring Boot engine.',
+      command: './mvnw spring-boot:run',
+      icon: Terminal
+    },
+    {
+      label: 'Frontend Launch',
+      desc: 'Install dependencies and launch the Angular dashboard.',
+      command: 'npm install && ng serve',
+      icon: Play
+    }
+  ]);
+
+  copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      console.log('Comando copiado:', text);
+    });
+  }
 
   projectDocs = signal<DocSection[]>([
     {
@@ -93,7 +130,6 @@ export class AboutComponent {
     }
   ]);
 
-  // Nova Seção baseada no LogController e SystemController
   observabilityFeatures = signal<BackendCard[]>([
     {
       label: 'Diagnostic Logging',
