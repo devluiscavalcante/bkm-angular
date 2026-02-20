@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, signal, inject } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { CommonModule, ViewportScroller } from '@angular/common';
+
 import {
   LucideAngularModule,
   Database,
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, LucideAngularModule],
   template: `
     <nav class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 z-[60] px-6 flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -56,13 +57,16 @@ import {
       <nav class="flex-1 px-4 space-y-1">
         @for (item of menuItems; track item.id) {
           <a
-            [routerLink]="['/' + item.id]"
-            (click)="closeMenu()"
-            routerLinkActive="bg-gray-900 text-white shadow-md"
-            [routerLinkActiveOptions]="{ exact: true }"
-            class="w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all group"
+            (click)="navigateTo(item)"
+            [class.bg-gray-900]="isItemActive(item)"
+            [class.text-white]="isItemActive(item)"
+            [class.shadow-md]="isItemActive(item)"
+            class="w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 transition-all cursor-pointer decoration-none group"
+            [class.text-gray-600]="!isItemActive(item)"
+            [class.hover:text-gray-900]="!isItemActive(item)"
+            [class.hover:bg-gray-50]="!isItemActive(item)"
           >
-            <lucide-icon [name]="item.icon" class="w-4 h-4"></lucide-icon>
+            <lucide-icon [name]="item.icon" class="w-4 h-4" [class.text-white]="isItemActive(item)"></lucide-icon>
             <span class="font-medium">{{ item.title }}</span>
           </a>
         }
@@ -83,6 +87,10 @@ import {
   `
 })
 export class SidebarComponent {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private scroller = inject(ViewportScroller);
+
   readonly menuIcon = Menu;
   readonly closeIcon = X;
   readonly shieldIcon = Shield;
@@ -91,14 +99,44 @@ export class SidebarComponent {
   isMenuOpen = signal(false);
 
   readonly menuItems = [
-    { id: 'inicio', title: 'Home', icon: Database },
-    { id: 'sobre', title: 'About', icon: FileText },
-    { id: 'especificacoes', title: 'Specs', icon: Settings },
-    { id: 'estrutura', title: 'Structure', icon: FolderTree },
-    { id: 'backup', title: 'Backup', icon: Play },
-    { id: 'historico', title: 'History', icon: History },
-    { id: 'logs', title: 'Logs', icon: List }
+    { id: 'inicio', title: 'Home', icon: Database, fragment: 'inicio' },
+    { id: 'sobre', title: 'About', icon: FileText, fragment: 'sobre' },
+    { id: 'especificacoes', title: 'Specs', icon: Settings, fragment: 'especificacoes' },
+    { id: 'estrutura', title: 'Structure', icon: FolderTree, fragment: 'estrutura' },
+    { id: 'backup', title: 'Backup', icon: Play, fragment: null },
+    { id: 'historico', title: 'History', icon: History, fragment: null },
+    { id: 'logs', title: 'Logs', icon: List, fragment: null }
   ];
+
+  isItemActive(item: any): boolean {
+    const currentUrl = this.router.url;
+    const currentFragment = this.route.snapshot.fragment;
+
+    if (item.fragment) {
+      if (currentUrl.includes('/inicio') && !currentFragment && item.fragment === 'inicio') return true;
+      return currentFragment === item.fragment;
+    }
+
+    return currentUrl.includes(item.id);
+  }
+
+  navigateTo(item: any) {
+    this.closeMenu();
+
+    if (item.fragment) {
+      if (item.fragment === 'inicio') {
+        this.router.navigate(['/inicio']).then(() => {
+          this.scroller.scrollToPosition([0, 0]);
+        });
+      } else {
+        this.router.navigate(['/inicio'], { fragment: item.fragment }).then(() => {
+          this.scroller.scrollToAnchor(item.fragment!);
+        });
+      }
+    } else {
+      this.router.navigate(['/' + item.id]);
+    }
+  }
 
   toggleMenu() { this.isMenuOpen.update(v => !v); }
   closeMenu() { this.isMenuOpen.set(false); }

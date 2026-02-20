@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule, Zap, Shield, Package, LucideIconData } from 'lucide-angular';
+import { AboutComponent } from '../about/about.component';
+import { SpecsComponent } from '../specs/specs.component';
+import { StructureComponent } from '../structure/structure.component';
 
 interface Feature {
   icon: LucideIconData;
@@ -14,7 +17,8 @@ interface Feature {
 @Component({
   selector: 'app-initial',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule, RouterModule],
+  imports: [CommonModule, LucideAngularModule, FormsModule, RouterModule, AboutComponent,
+  SpecsComponent, StructureComponent],
   templateUrl: './initial.component.html'
 })
 export class InitialComponent {
