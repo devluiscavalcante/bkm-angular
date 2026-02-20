@@ -1,8 +1,9 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Plus, Trash2, Play, Folder } from 'lucide-angular';
-import { BackupService } from '../../core/services/backup.service';
+import { LucideAngularModule, Plus, Trash2, Play, Folder, ShieldCheck, Zap, XCircle, Pause, RefreshCw } from 'lucide-angular';
+import { BackupService, BackupProgress } from '../../core/services/backup.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-backup',
@@ -10,26 +11,35 @@ import { BackupService } from '../../core/services/backup.service';
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './backup.component.html'
 })
-export class BackupComponent {
+export class BackupComponent implements OnDestroy {
 
   readonly plusIcon = Plus;
   readonly trashIcon = Trash2;
   readonly playIcon = Play;
   readonly folderIcon = Folder;
+  readonly shieldIcon = ShieldCheck;
+  readonly zapIcon = Zap;
+  readonly cancelIcon = XCircle;
+  readonly pauseIcon = Pause;
+  readonly resumeIcon = RefreshCw;
 
   sources = signal<string[]>([]);
   destinations = signal<string[]>([]);
-
   newSource = '';
   newDestination = '';
 
   isBackingUp = signal(false);
+  isPaused = signal(false); // Novo estado para controle de pausa
   progress = signal(0);
   currentStatus = signal('');
+  activeTaskIds = signal<number[]>([]);
+
+  private sseSubscription?: Subscription;
 
   canStart = computed(() =>
     this.sources().length > 0 &&
     this.destinations().length > 0 &&
+    this.sources().length === this.destinations().length &&
     !this.isBackingUp()
   );
 
@@ -61,26 +71,71 @@ export class BackupComponent {
     if (!this.canStart()) return;
 
     this.isBackingUp.set(true);
-    this.progress.set(10);
-    this.currentStatus.set('Iniciando processo de cópia...');
+    this.isPaused.set(false);
+    this.currentStatus.set('Validando caminhos de segurança...');
 
     this.backupService.startBackup(this.sources(), this.destinations())
       .subscribe({
-        next: (_res) => {
-          this.progress.set(100);
-          this.currentStatus.set('Backup finalizado com sucesso!');
-
-          setTimeout(() => {
-            this.isBackingUp.set(false);
-            this.progress.set(0);
-            this.currentStatus.set('');
-          }, 3000);
+        next: (res: any) => {
+          this.activeTaskIds.set(res.taskIds || []);
+          this.connectToProgressStream();
         },
         error: (err) => {
           this.isBackingUp.set(false);
-          this.currentStatus.set('Erro ao executar backup.');
-          console.error(err);
+          this.currentStatus.set(err.error || 'Erro na validação do sistema.');
         }
       });
+  }
+
+  togglePause() {
+    const tasks = this.activeTaskIds();
+    if (tasks.length === 0) return;
+
+    const action = this.isPaused()
+      ? this.backupService.resumeBackup(tasks[0])
+      : this.backupService.pauseBackup(tasks[0]);
+
+    action.subscribe(() => {
+      this.isPaused.update(v => !v);
+      this.currentStatus.set(this.isPaused() ? 'Backup pausado pelo usuário' : 'Retomando backup...');
+    });
+  }
+
+  cancelBackup() {
+    const tasks = this.activeTaskIds();
+    if (tasks.length === 0) return;
+
+    this.backupService.cancelBackup(tasks[0]).subscribe(() => {
+      this.finalizeProcess('Operação cancelada pelo usuário.');
+    });
+  }
+
+  private connectToProgressStream() {
+    this.sseSubscription = this.backupService.getRealTimeProgress().subscribe({
+      next: (data: BackupProgress) => { // Tipagem explícita resolve o erro TS7006
+        this.progress.set(data.percentage);
+        this.currentStatus.set(`Copiando: ${data.currentFile || 'Processando arquivos...'}`);
+
+        if (data.percentage === 100) {
+          this.finalizeProcess('Backup concluído com sucesso!');
+        }
+      },
+      error: () => this.finalizeProcess('Conexão perdida, mas o processo continua no servidor.')
+    });
+  }
+
+  private finalizeProcess(msg: string) {
+    this.currentStatus.set(msg);
+    setTimeout(() => {
+      this.isBackingUp.set(false);
+      this.isPaused.set(false);
+      this.progress.set(0);
+      this.activeTaskIds.set([]);
+      this.sseSubscription?.unsubscribe();
+    }, 4000);
+  }
+
+  ngOnDestroy() {
+    this.sseSubscription?.unsubscribe();
   }
 }

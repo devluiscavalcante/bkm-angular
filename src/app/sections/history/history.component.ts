@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, History, CheckCircle, CircleX } from 'lucide-angular';
+import { LucideAngularModule, History, CheckCircle, CircleX, ArrowRight } from 'lucide-angular';
 import { BackupService, BackupRecord } from '../../core/services/backup.service';
 
 @Component({
@@ -14,6 +14,8 @@ export class HistoryComponent implements OnInit {
   readonly historyIcon = History;
   readonly successIcon = CheckCircle;
   readonly errorIcon = CircleX;
+  readonly arrowIcon = ArrowRight;
+
   historyRecords = signal<BackupRecord[]>([]);
   isLoading = signal(true);
 
