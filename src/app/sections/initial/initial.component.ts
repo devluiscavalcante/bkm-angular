@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { LucideAngularModule, Zap, Shield, Package, LucideIconData } from 'lucide-angular';
 import { AboutComponent } from '../about/about.component';
 import { SpecsComponent } from '../specs/specs.component';
@@ -17,11 +17,20 @@ interface Feature {
 @Component({
   selector: 'app-initial',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule, RouterModule, AboutComponent,
-  SpecsComponent, StructureComponent],
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    FormsModule,
+    RouterModule,
+    AboutComponent,
+    SpecsComponent,
+    StructureComponent
+  ],
   templateUrl: './initial.component.html'
 })
 export class InitialComponent {
+  private router = inject(Router);
+
   readonly features: Feature[] = [
     { icon: Zap, label: 'Fast', desc: 'Incremental backups', css: 'text-amber-500' },
     { icon: Shield, label: 'Secure', desc: 'Integrity check', css: 'text-blue-500' },
@@ -30,6 +39,10 @@ export class InitialComponent {
 
   readonly titlePrefix = "Your infrastructure";
   readonly titleHighlight = "protected and automated.";
+
+  navigateToSection(options: { fragment: string }) {
+    this.router.navigate(['/inicio'], { fragment: options.fragment });
+  }
 
   getGreeting(): string {
     const hour = new Date().getHours();
