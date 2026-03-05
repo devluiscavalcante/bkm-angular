@@ -137,7 +137,7 @@ export class AboutComponent {
       tech: 'Java NIO / Logging'
     },
     {
-      label: 'System Storage Stats',
+      label: 'System StorageComponent Stats',
       desc: 'The SystemController provides real-time information about Windows storage partitions, mapping disk health and available space.',
       tech: 'SystemStorageService'
     },

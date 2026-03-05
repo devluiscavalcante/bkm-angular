@@ -14,7 +14,7 @@ import {
   Menu,
   X,
   Shield,
-  Github
+  Github, HardDrive
 } from 'lucide-angular';
 
 @Component({
@@ -105,7 +105,8 @@ export class SidebarComponent {
     { id: 'estrutura', title: 'Structure', icon: FolderTree, fragment: 'estrutura' },
     { id: 'backup', title: 'Backup', icon: Play, fragment: null },
     { id: 'historico', title: 'History', icon: History, fragment: null },
-    { id: 'logs', title: 'Logs', icon: List, fragment: null }
+    { id: 'logs', title: 'Logs', icon: List, fragment: null },
+    { id: 'storage', title: 'Storage', icon: HardDrive, fragment: null }
   ];
 
   isItemActive(item: any): boolean {

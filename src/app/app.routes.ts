@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./sections/history/history.component').then(m => m.HistoryComponent)
   },
   {
+    path: 'storage',
+    loadComponent: () => import('./sections/storage/storage.component').then(m => m.StorageComponent)
+  },
+  {
     path: 'sobre',
     loadComponent: () => import('./sections/about/about.component').then(m => m.AboutComponent)
   },

@@ -6,6 +6,8 @@ import { LucideAngularModule, Zap, Shield, Package, LucideIconData } from 'lucid
 import { AboutComponent } from '../about/about.component';
 import { SpecsComponent } from '../specs/specs.component';
 import { StructureComponent } from '../structure/structure.component';
+// 1. Certifique-se de que o import do arquivo está correto
+import { StorageComponent } from '../storage/storage.component';
 
 interface Feature {
   icon: LucideIconData;
@@ -24,7 +26,9 @@ interface Feature {
     RouterModule,
     AboutComponent,
     SpecsComponent,
-    StructureComponent
+    StructureComponent,
+    // 2. ADICIONE O COMPONENTE AQUI para que o Angular reconheça a tag <app-storage>
+    StorageComponent
   ],
   templateUrl: './initial.component.html'
 })
